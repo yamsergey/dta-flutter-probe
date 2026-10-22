@@ -79,6 +79,12 @@ Dart's HTTP profile through `package:http_profile`.
 When DTA mocked the 500, Dart's HTTP profiler recorded it as a genuine server
 response. Only DTA knows it was mocked.
 
+---
+
+> **The rest of this README is mostly for your coding agent.** Point it here and
+> it has what it needs to run the app, connect the three servers and replay each
+> scenario.
+
 ## What's in the app
 
 One screen with a button per path through the app, plus a WebView screen:
