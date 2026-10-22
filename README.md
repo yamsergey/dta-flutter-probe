@@ -24,7 +24,9 @@ agent opens the screen with Marionette, then reads the page with DTA, link targe
 included, without tapping anything. The Flutter tools see only the back button and
 the title.
 
-[![WebView](videos/webview.jpg)](videos/webview.mp4)
+
+https://github.com/user-attachments/assets/1eba7309-0211-414d-9cbf-9ec885802654
+
 
 ### 2. Making the backend fail on purpose
 
@@ -33,14 +35,18 @@ button. The app carries on as if nothing went wrong, and the agent finds out why
 the code never checks the status code. A bug that normally needs a broken server,
 reproduced on demand.
 
-[![Mocked 500](videos/mock500.jpg)](videos/mock500.mp4)
+
+https://github.com/user-attachments/assets/3cc65f62-b168-467c-8e7a-75f860aaaec0
+
 
 ### 3. A Custom Tab
 
 Login pages often open in a Custom Tab, which runs in Chrome, not in the app. The
 agent reads what's on the page and lists every request it made.
 
-[![Custom Tab](videos/customtab.jpg)](videos/customtab.mp4)
+
+https://github.com/user-attachments/assets/82171e28-f990-4ce4-8998-3c8df3bc7fa1
+
 
 One note on the WebView video: the agent's project notes say that DTA's
 `layout_tree` shows the page only when called without filters. With a `type:
