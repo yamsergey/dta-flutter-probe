@@ -1,31 +1,69 @@
 # dta_flutter_probe
 
-What can a coding agent see in a Flutter app running on Android?
+A Flutter app on Android is really two apps in one: the Dart code you write, and
+the native Android app it runs inside. WebViews, Custom Tabs, plugin storage and
+native networking all happen on the native side. Can a coding agent see what's
+going on there, and change it?
 
-This is a small Flutter app that deliberately touches both layers of a Flutter
-app on Android: Dart, and the native Android app around it. I ran three MCP
-servers against it and recorded what each one could see and do:
+This repo is a small Flutter app that uses both sides, plus three short videos of
+Claude Code working on it with three MCP servers connected:
 
-| Server | Version | Works through |
-|---|---|---|
-| [Dart & Flutter MCP server](https://github.com/dart-lang/ai/tree/main/pkgs/dart_mcp_server) | 1.2.0 (bundled with Dart 3.13.5) | Dart VM service and DTD |
-| [Marionette MCP](https://github.com/leancodepl/marionette_mcp) | 0.7.0 | Dart VM service |
-| [DTA](https://github.com/yamsergey/dta) | sidekick 0.9.40 | in-process Android agent (debug builds) |
+- the [Dart & Flutter MCP server](https://github.com/dart-lang/ai/tree/main/pkgs/dart_mcp_server), for the Dart side
+- [Marionette](https://github.com/leancodepl/marionette_mcp), to tap through the Flutter UI
+- [DTA](https://github.com/yamsergey/dta), which runs inside the Android app and reads and changes the native side
 
-Tested on 9 October 2026 with Flutter 3.47.7 on an Android emulator (Pixel 10, API 37).
+## The videos
 
-## The short version
+The agent is on the left and the app on the right. The prompts say what to find
+out, not which tool to use. Waits where only the spinner moves are sped up.
 
-The Dart side is well covered: widget tree, hot reload, runtime errors, and Dart's
-HTTP profile. The native side is almost invisible to the Flutter tools: WebView
-content, Custom Tabs, what plugins wrote to SharedPreferences and SQLite, the
-activity lifecycle, and native SDK traffic. The one exception is `ok_http`, which
-reports its requests into Dart's HTTP profile through `package:http_profile`.
+### 1. What's inside a WebView
 
-Reading the runtime is half of it. The other half is changing it: mocking a
-backend response, putting a stale token back, seeding a database, so a bug happens
-on demand. DTA did that for the native side here: it mocked a 500 that the Flutter
-app really received, and that Dart's profiler recorded as a genuine response.
+The app shows a web page in a WebView. Asked where the link on that page goes, the
+agent opens the screen with Marionette, then reads the page with DTA, link target
+included, without tapping anything. The Flutter tools see only the back button and
+the title.
+
+[![WebView](videos/webview.jpg)](videos/webview.mp4)
+
+### 2. Making the backend fail on purpose
+
+The agent makes the app's native HTTP request return a 500, then presses the
+button. The app carries on as if nothing went wrong, and the agent finds out why:
+the code never checks the status code. A bug that normally needs a broken server,
+reproduced on demand.
+
+[![Mocked 500](videos/mock500.jpg)](videos/mock500.mp4)
+
+### 3. A Custom Tab
+
+Login pages often open in a Custom Tab, which runs in Chrome, not in the app. The
+agent reads what's on the page and lists every request it made.
+
+[![Custom Tab](videos/customtab.jpg)](videos/customtab.mp4)
+
+One note on the WebView video: the agent's project notes say that DTA's
+`layout_tree` shows the page only when called without filters. With a `type:
+"WebView"` filter, the current DTA release leaves the page out.
+
+## Why this matters
+
+Reading the app is half of it. The other half is changing it: mocking a backend
+response, putting a stale token back, seeding a database, so a bug happens on
+demand instead of once a day. Coding agents make that kind of custom debugging
+environment practical for mobile developers, as long as they can reach both sides
+of the app.
+
+DTA is Android-only. The same in-app approach works on iOS:
+[FLEX](https://github.com/FLEXTool/FLEX) has long shown that network traffic, files
+and user defaults can be inspected and edited from inside an iOS app. It just isn't
+exposed to agents.
+
+## What each server can see
+
+The Dart side is well covered by the Flutter tools. The native side is almost
+invisible to them. The one exception is `ok_http`, which reports its requests into
+Dart's HTTP profile through `package:http_profile`.
 
 | What the agent needs to know | Dart & Flutter MCP | Marionette | DTA |
 |---|---|---|---|
@@ -38,38 +76,8 @@ app really received, and that Dart's profiler recorded as a genuine response.
 | Make the backend fail on demand | ❌ | ❌ | ✅ mock rules on OkHttp |
 | Which code created an element | partly: one widget at a time, after a tap in selection mode | ❌ | ❌ for Flutter widgets |
 
-DTA is Android-only. The same in-process approach works on iOS:
-[FLEX](https://github.com/FLEXTool/FLEX) has long shown that network traffic, files
-and user defaults can be inspected and edited from inside an iOS app. It just isn't
-exposed to agents.
-
-## Videos
-
-Claude Code with all three servers connected, on the left; the app on the right.
-The prompts describe what to find out, not which tool to use. Waits where only the
-spinner moves are sped up.
-
-The workspace's CLAUDE.md lists the device, the package and the VM service URI. It
-also says that `layout_tree` includes WebView content only when called without
-filters: in DTA 0.9.40, a `type: "WebView"` filter drops the page's DOM, and
-agents tend to reach for that filter.
-
-**WebView: where does the link go?** Marionette opens the screen; DTA's
-`layout_tree` reads the page inside the WebView, including the link's target,
-without tapping it.
-
-[![WebView](videos/webview.jpg)](videos/webview.mp4)
-
-**Mocked 500.** DTA makes the `ok_http` request return a 500. The Flutter app
-receives it, and the agent notices the app treats it as a normal response because
-`_nativeHttp` never checks the status code.
-
-[![Mocked 500](videos/mock500.jpg)](videos/mock500.mp4)
-
-**Custom Tab.** The page opens in Chrome's process, outside the app. DTA reads
-what's on it and every request it made.
-
-[![Custom Tab](videos/customtab.jpg)](videos/customtab.mp4)
+When DTA mocked the 500, Dart's HTTP profiler recorded it as a genuine server
+response. Only DTA knows it was mocked.
 
 ## What's in the app
 
@@ -88,6 +96,16 @@ It also registers a Marionette extension, `probe.expireToken`, which replaces th
 stored token with an expired one.
 
 ## Reproducing it
+
+### Tested with
+
+| | Version |
+|---|---|
+| Flutter / Dart | 3.47.7 / 3.13.5 |
+| Dart & Flutter MCP server | 1.2.0 (bundled with Dart) |
+| Marionette MCP | 0.7.0 |
+| DTA | 0.9.40 |
+| Device | Android emulator, API 37 (October 2026) |
 
 ### Prerequisites
 
