@@ -1,0 +1,3 @@
+[{"name":"dtd","arguments":{"command":"connect","uri":"${DTD_URI}"}},
+ {"name":"widget_inspector","arguments":{"command":"get_widget_tree","summaryOnly":true}},
+ {"name":"vm_service","arguments":{"command":"callMethod","method":"ext.flutter.inspector.getRootWidgetTree","isolateId":"${ISOLATE_ID}","arguments":{"groupName":"probe","isSummaryTree":"true","withPreviews":"true","fullDetails":"true"}}}]

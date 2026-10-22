@@ -1,0 +1,8 @@
+[{"name":"connect","arguments":{"uri":"${VM_SERVICE_WS}"}},
+ {"name":"get_interactive_elements"},
+ {"name":"tap","arguments":{"key":"dart_http"}}, {"sleep":3},
+ {"name":"tap","arguments":{"key":"native_http"}}, {"sleep":3},
+ {"name":"tap","arguments":{"key":"prefs"}}, {"sleep":1},
+ {"name":"tap","arguments":{"key":"sqlite"}}, {"sleep":1},
+ {"name":"probe_expire_token","arguments":{"reason":"marionette-test"}},
+ {"name":"disconnect"}]

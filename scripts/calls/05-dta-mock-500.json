@@ -1,0 +1,2 @@
+[{"name":"mock_create_rule","arguments":{"package":"dev.yamsergey.dta_flutter_probe","type":"HTTP","name":"users2-500","url_pattern":".*/users/2","status_code":500,"body":"{\"name\":\"MOCKED BY DTA\"}"}},
+ {"name":"mock_list_rules","arguments":{"package":"dev.yamsergey.dta_flutter_probe"}}]

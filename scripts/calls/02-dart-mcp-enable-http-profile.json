@@ -1,0 +1,3 @@
+[{"name":"vm_service","arguments":{"command":"connect","appUri":"${VM_SERVICE_WS}"}},
+ {"name":"vm_service","arguments":{"command":"callMethod","method":"getVM"}},
+ {"name":"vm_service","arguments":{"command":"callMethod","method":"ext.dart.io.httpEnableTimelineLogging","isolateId":"${ISOLATE_ID}","arguments":{"enabled":"true"}}}]

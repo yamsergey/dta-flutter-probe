@@ -1,0 +1,3 @@
+[{"name":"cdp_watch_status","arguments":{"package":"dev.yamsergey.dta_flutter_probe"}},
+ {"name":"network_requests","arguments":{"package":"dev.yamsergey.dta_flutter_probe"}},
+ {"name":"cct_traces","arguments":{}}]

@@ -1,0 +1,5 @@
+[{"name":"list_apps"},
+ {"name":"network_requests","arguments":{"package":"dev.yamsergey.dta_flutter_probe"}},
+ {"name":"app_data","arguments":{"package":"dev.yamsergey.dta_flutter_probe","command":"read_prefs","file":"FlutterSharedPreferences"}},
+ {"name":"app_data","arguments":{"package":"dev.yamsergey.dta_flutter_probe","command":"database_query","database":"probe.db","sql":"SELECT * FROM profile"}},
+ {"name":"app_runtime","arguments":{"package":"dev.yamsergey.dta_flutter_probe","command":"lifecycle"}}]

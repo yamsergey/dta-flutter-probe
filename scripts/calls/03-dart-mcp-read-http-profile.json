@@ -1,0 +1,2 @@
+[{"name":"vm_service","arguments":{"command":"connect","appUri":"${VM_SERVICE_WS}"}},
+ {"name":"vm_service","arguments":{"command":"callMethod","method":"ext.dart.io.getHttpProfile","isolateId":"${ISOLATE_ID}"}}]

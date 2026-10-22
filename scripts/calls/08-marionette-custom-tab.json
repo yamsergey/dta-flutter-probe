@@ -1,0 +1,4 @@
+[{"name":"connect","arguments":{"uri":"${VM_SERVICE_WS}"}},
+ {"name":"tap","arguments":{"key":"custom_tab"}}, {"sleep":10},
+ {"name":"get_interactive_elements"},
+ {"name":"disconnect"}]
